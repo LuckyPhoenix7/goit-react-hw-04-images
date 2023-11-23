@@ -20,6 +20,7 @@ export const App = () => {
 
     if (currentValue.trim() === '') {
       toast.error('Введите название для поиска!');
+      return;
     }
 
     setQuery(currentValue);
@@ -28,36 +29,33 @@ export const App = () => {
   };
 
   const onLoadMore = () => {
-    setPage(prevState => prevState + 1);
+    setPage(prevPage => prevPage + 1);
+  };
+
+  const onAddImages = async () => {
+    try {
+      setLoading(true);
+      setError(false);
+
+      const imagesData = await fetchImages(query, page);
+      if (imagesData.hits.length === 0) {
+        toast.error('Картинки не найдены!');
+        return;
+      }
+
+      setImages(prevImages => [...prevImages, ...imagesData.hits]);
+      toast.success('Картинки успешно загружены!');
+    } catch (error) {
+      setError(true);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
-    if (query === '') {
-      return;
+    if (query.trim() !== '') {
+      onAddImages();
     }
-
-    async function onAddImages() {
-      try {
-        setLoading(true);
-        setError(false);
-
-        const imagesData = await fetchImages(query, page);
-        if (imagesData.hits.length === 0) {
-          toast.error('Картинки не найдены!');
-          return;
-        }
-
-        setImages(prevState => [...prevState, ...imagesData.hits]);
-
-        toast.success('Картинки успешно загружены!');
-      } catch (error) {
-        setError(true);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    onAddImages();
   }, [query, page]);
 
   return (

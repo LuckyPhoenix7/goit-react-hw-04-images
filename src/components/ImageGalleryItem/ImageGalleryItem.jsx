@@ -2,7 +2,9 @@ import { useState } from 'react';
 import { ImageStyled } from './ImageGalleryItem.styled';
 import { Modal } from '../Modal/Modal';
 
-export const ImageGalleryItem = ({ webformatURL, tags, largeImageURL }) => {
+export const ImageGalleryItem = ({
+  image: { webformatURL, tags, largeImageURL },
+}) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const openModal = () => {
